@@ -1,0 +1,105 @@
+========================================================
+   NETSCOPE AI — FINAL SECURITY REPORT
+========================================================
+   Generated : 2026-05-29 22:00:46
+   Uptime    : 16m 0s
+========================================================
+
+   TRAFFIC STATISTICS
+   ────────────────────────────────────────
+   Total Packets  : 298909
+   TCP            : 278117 (93.0%)
+   UDP            : 18466 (6.2%)
+   ICMP           : 2303 (0.8%)
+   Other          : 23 (0.0%)
+   Total Data     : 309.50 MB
+
+   TOP HOSTS
+   ────────────────────────────────────────
+   1   192.168.1.60       298738 packets
+   2   13.224.163.24      110194 packets
+   3   13.224.163.15      52008 packets
+   4   13.224.163.96      32973 packets
+   5   216.239.34.223     31500 packets
+   6   216.239.38.223     13331 packets
+   7   3.5.151.114        5517 packets
+   8   3.5.147.8          5143 packets
+   9   3.5.149.148        3847 packets
+   10  52.219.40.251      3729 packets
+
+   TOP PORTS
+   ────────────────────────────────────────
+   1   443    HTTPS        294608
+   2   58268  UNKNOWN      26578
+   3   58428  UNKNOWN      9877
+   4   58276  UNKNOWN      5496
+   5   51733  UNKNOWN      5424
+   6   51722  UNKNOWN      5143
+   7   58355  UNKNOWN      4896
+   8   58368  UNKNOWN      4745
+   9   58399  UNKNOWN      4558
+   10  58424  UNKNOWN      4280
+
+   APPLICATIONS
+   ────────────────────────────────────────
+   1   HTTPS          294608  99.3%
+   2   DNS            1402     0.5%
+   3   OTHER          555      0.2%
+   4   HTTP           12       0.0%
+   5   NTP            6        0.0%
+
+   TOP SESSIONS
+   ────────────────────────────────────────
+   192.168.1.60 -> 216.239.34.223 | TCP 58268->443 | 14675 pkts | 17.65 MB | 700.6s
+   216.239.34.223 -> 192.168.1.60 | TCP 443->58268 | 11903 pkts | 814.92 KB | 700.6s
+   192.168.1.60 -> 3.5.151.114 | TCP 51733->443 | 3718 pkts | 5.21 MB | 9.2s
+   192.168.1.60 -> 216.239.38.223 | TCP 58276->443 | 2889 pkts | 3.60 MB | 602.7s
+   216.239.38.223 -> 192.168.1.60 | TCP 443->58276 | 2607 pkts | 326.50 KB | 602.7s
+
+   GEO INTELLIGENCE
+   ────────────────────────────────────────
+   Internal Connections : 1779
+   External Connections : 297130
+
+   NETWORK INVENTORY
+   ────────────────────────────────────────
+   Total Known Hosts : 153
+   192.168.1.60       298738 pkts  first: 21:44:45  last: 22:00:46
+   13.224.163.24      110194 pkts  first: 21:51:30  last: 21:55:14
+   13.224.163.15      52008  pkts  first: 21:49:08  last: 22:00:40
+   13.224.163.96      32973  pkts  first: 21:56:15  last: 21:57:17
+   216.239.34.223     31500  pkts  first: 21:44:52  last: 22:00:42
+   216.239.38.223     13331  pkts  first: 21:48:34  last: 22:00:37
+   3.5.151.114        5517   pkts  first: 21:55:28  last: 21:55:49
+   3.5.147.8          5143   pkts  first: 21:54:30  last: 21:54:43
+   3.5.149.148        3847   pkts  first: 21:57:38  last: 21:57:42
+   52.219.40.251      3729   pkts  first: 22:00:40  last: 22:00:46
+
+   SECURITY SUMMARY
+   ────────────────────────────────────────
+   Threat Score     : 45/100
+   Risk Level       : HIGH
+   Security Health  : 55%
+   Total Alerts     : 20
+
+   ACTIVE THREATS
+   ────────────────────────────────────────
+   ⚠ HOST DOMINANCE DETECTED
+   ⚠ POSSIBLE PORT SCAN DETECTED
+
+   ALERT HISTORY
+   ────────────────────────────────────────
+   [22:00:32] ⚠ POSSIBLE PORT SCAN DETECTED
+   [22:00:37] ⚠ HOST DOMINANCE DETECTED
+   [22:00:37] ⚠ POSSIBLE PORT SCAN DETECTED
+   [22:00:42] ⚠ HOST DOMINANCE DETECTED
+   [22:00:42] ⚠ POSSIBLE PORT SCAN DETECTED
+   [22:00:45] ⚠ BANDWIDTH SPIKE DETECTED
+   [22:00:46] ⚠ HOST DOMINANCE DETECTED
+   [22:00:46] ⚠ POSSIBLE PORT SCAN DETECTED
+   [22:00:46] ⚠ HOST DOMINANCE DETECTED
+   [22:00:46] ⚠ POSSIBLE PORT SCAN DETECTED
+
+========================================================
+   END OF REPORT
+========================================================

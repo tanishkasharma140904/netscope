@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetScope AI WebSocket Test Panel</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background-color: #121212;
+            color: #00ff00;
+        }
+        h1 {
+            border-bottom: 1px solid #00ff00;
+            padding-bottom: 10px;
+            margin-bottom: 25px;
+        }
+        .stream-panel {
+            border: 1px solid #00ff00;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #1e1e1e;
+        }
+        .btn {
+            background: #000;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 6px 16px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 14px;
+            border-radius: 3px;
+        }
+        .btn:hover {
+            background: #00ff00;
+            color: #000;
+        }
+        .status {
+            margin-left: 15px;
+            font-weight: bold;
+        }
+        .output {
+            background: #000;
+            border: 1px solid #333;
+            height: 160px;
+            overflow-y: auto;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 3px;
+            font-size: 13px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>🛰  NetScope AI WebSocket Test Panel</h1>
+    <p>Use the panels below to test real-time WebSocket streaming feeds. Payloads will update automatically every second.</p>
+
+    <!-- STATS PANEL -->
+    <div class="stream-panel">
+        <h2>📊 Live Stats Stream (/ws/live/stats)</h2>
+        <button class="btn" id="btn-stats-connect" onclick="toggleConnect('stats')">Connect</button>
+        <span class="status" id="status-stats" style="color: #ff0000;">DISCONNECTED</span>
+        <div class="output" id="output-stats"></div>
+    </div>
+
+    <!-- THREATS PANEL -->
+    <div class="stream-panel">
+        <h2>🚨 Live Threats Stream (/ws/live/threats)</h2>
+        <button class="btn" id="btn-threats-connect" onclick="toggleConnect('threats')">Connect</button>
+        <span class="status" id="status-threats" style="color: #ff0000;">DISCONNECTED</span>
+        <div class="output" id="output-threats"></div>
+    </div>
+
+    <!-- SESSIONS PANEL -->
+    <div class="stream-panel">
+        <h2>🔗 Live Sessions Stream (/ws/live/sessions)</h2>
+        <button class="btn" id="btn-sessions-connect" onclick="toggleConnect('sessions')">Connect</button>
+        <span class="status" id="status-sessions" style="color: #ff0000;">DISCONNECTED</span>
+        <div class="output" id="output-sessions"></div>
+    </div>
+
+    <!-- HOSTS PANEL -->
+    <div class="stream-panel">
+        <h2>🖥 Live Hosts Stream (/ws/live/hosts)</h2>
+        <button class="btn" id="btn-hosts-connect" onclick="toggleConnect('hosts')">Connect</button>
+        <span class="status" id="status-hosts" style="color: #ff0000;">DISCONNECTED</span>
+        <div class="output" id="output-hosts"></div>
+    </div>
+
+    <script>
+        const sockets = {
+            stats: null,
+            threats: null,
+            sessions: null,
+            hosts: null
+        };
+
+        function toggleConnect(type) {
+            const btn = document.getElementById(`btn-${type}-connect`);
+            const statusEl = document.getElementById(`status-${type}`);
+            const outputEl = document.getElementById(`output-${type}`);
+
+            if (sockets[type]) {
+                // Disconnect
+                sockets[type].close();
+                sockets[type] = null;
+                btn.innerText = "Connect";
+                statusEl.innerText = "DISCONNECTED";
+                statusEl.style.color = "#ff0000";
+                outputEl.innerHTML += `[SYSTEM] Disconnected.\n`;
+                outputEl.scrollTop = outputEl.scrollHeight;
+            } else {
+                // Connect
+                outputEl.innerHTML = `[SYSTEM] Connecting to ws://${window.location.host}/ws/live/${type} ...\n`;
+                
+                // Determine websocket protocol based on http/https
+                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                const wsUrl = `${protocol}//${window.location.host}/ws/live/${type}`;
+                const ws = new WebSocket(wsUrl);
+
+                ws.onopen = () => {
+                    statusEl.innerText = "CONNECTED";
+                    statusEl.style.color = "#00ff00";
+                    btn.innerText = "Disconnect";
+                    outputEl.innerHTML += `[SYSTEM] Connected successfully.\n`;
+                    outputEl.scrollTop = outputEl.scrollHeight;
+                };
+
+                ws.onmessage = (event) => {
+                    const data = JSON.parse(event.data);
+                    outputEl.innerHTML += `[${new Date().toLocaleTimeString()}] ${JSON.stringify(data, null, 2)}\n\n`;
+                    outputEl.scrollTop = outputEl.scrollHeight;
+                };
+
+                ws.onclose = () => {
+                    if (sockets[type]) {
+                        sockets[type] = null;
+                        btn.innerText = "Connect";
+                        statusEl.innerText = "DISCONNECTED";
+                        statusEl.style.color = "#ff0000";
+                        outputEl.innerHTML += `[SYSTEM] Connection closed by server.\n`;
+                        outputEl.scrollTop = outputEl.scrollHeight;
+                    }
+                };
+
+                ws.onerror = (err) => {
+                    outputEl.innerHTML += `[ERROR] WebSocket error.\n`;
+                    outputEl.scrollTop = outputEl.scrollHeight;
+                };
+
+                sockets[type] = ws;
+            }
+        }
+    </script>
+</body>
+</html>
