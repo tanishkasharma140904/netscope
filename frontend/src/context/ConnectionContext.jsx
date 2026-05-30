@@ -115,9 +115,21 @@ export const ConnectionProvider = ({ children }) => {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     
     let host = window.location.host;
-    // Fallback to backend port 8000 when opened via local file or Vite dev server
-    if (!host || host.includes(':3000') || host.includes(':3001') || host.includes(':5173') || window.location.protocol === 'file:') {
+
+    // Local development
+    if (
+      !host ||
+      host.includes(':3000') ||
+      host.includes(':3001') ||
+      host.includes(':5173') ||
+      window.location.protocol === 'file:'
+    ) {
       host = '127.0.0.1:8000';
+    }
+    
+    // Netlify Production
+    if (window.location.hostname.includes('netlify.app')) {
+      host = 'netscope-backend-6fbb.onrender.com';
     }
 
     const wsUrl = `${protocol}//${host}${urlPath}`;
