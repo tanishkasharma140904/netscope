@@ -359,7 +359,7 @@ https://netscope.netlify.app/
 
 ## Backend Deployment
 
-Render:
+Render: https://netscope-backend-6fbb.onrender.com
 
 Deployed successfully.
 
