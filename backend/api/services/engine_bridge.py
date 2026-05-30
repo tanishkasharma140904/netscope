@@ -29,7 +29,11 @@ from phase1.netscope_phase11_ultimate import (
     calculate_threat_score,
     get_risk_level,
     detect_anomalies,
-    format_bytes
+    format_bytes,
+    geo_counters,
+    external_ip_tracker,
+    expired_session_count,
+    generate_report
 )
 
 def get_stats():
@@ -233,4 +237,149 @@ def get_executive_summary():
             "total_alerts": len(recent_alerts),
             "top_threat": top_threat,
             "top_application": top_application
+        }
+
+def get_geo_intelligence():
+    """Returns the internal vs external connections and top external IP destinations."""
+    with lock:
+        internal_count = geo_counters.get("internal", 0)
+        external_count = geo_counters.get("external", 0)
+        total = internal_count + external_count
+        internal_ratio = round((internal_count / total * 100), 2) if total > 0 else 0.0
+        external_ratio = round((external_count / total * 100), 2) if total > 0 else 0.0
+        
+        top_external = external_ip_tracker.most_common(10)
+        
+        return {
+            "internal_connections": internal_count,
+            "external_connections": external_count,
+            "internal_ratio": internal_ratio,
+            "external_ratio": external_ratio,
+            "top_external_hosts": [
+                {
+                    "ip": ip,
+                    "packet_count": count
+                }
+                for ip, count in top_external
+            ]
+        }
+
+def get_session_analytics():
+    """Identifies the longest, largest, and most active sessions dynamically from sniffer memory."""
+    with lock:
+        all_sessions = list(session_tracker.items())
+        longest_session = None
+        largest_session = None
+        most_active_session = None
+
+        if all_sessions:
+            longest_session_entry = max(
+                all_sessions,
+                key=lambda x: (x[1]["last_seen"] - x[1]["first_seen"])
+            )
+            longest_session = {
+                "source_ip": longest_session_entry[0][0],
+                "destination_ip": longest_session_entry[0][1],
+                "protocol": longest_session_entry[0][2],
+                "source_port": longest_session_entry[0][3],
+                "destination_port": longest_session_entry[0][4],
+                "packets": longest_session_entry[1]["packets"],
+                "bytes": longest_session_entry[1]["bytes"],
+                "duration": round(longest_session_entry[1]["last_seen"] - longest_session_entry[1]["first_seen"], 2)
+            }
+
+            largest_session_entry = max(
+                all_sessions,
+                key=lambda x: x[1]["bytes"]
+            )
+            largest_session = {
+                "source_ip": largest_session_entry[0][0],
+                "destination_ip": largest_session_entry[0][1],
+                "protocol": largest_session_entry[0][2],
+                "source_port": largest_session_entry[0][3],
+                "destination_port": largest_session_entry[0][4],
+                "packets": largest_session_entry[1]["packets"],
+                "bytes": largest_session_entry[1]["bytes"],
+                "duration": round(largest_session_entry[1]["last_seen"] - largest_session_entry[1]["first_seen"], 2)
+            }
+
+            most_active_entry = max(
+                all_sessions,
+                key=lambda x: x[1]["packets"]
+            )
+            most_active_session = {
+                "source_ip": most_active_entry[0][0],
+                "destination_ip": most_active_entry[0][1],
+                "protocol": most_active_entry[0][2],
+                "source_port": most_active_entry[0][3],
+                "destination_port": most_active_entry[0][4],
+                "packets": most_active_entry[1]["packets"],
+                "bytes": most_active_entry[1]["bytes"],
+                "duration": round(most_active_entry[1]["last_seen"] - most_active_entry[1]["first_seen"], 2)
+            }
+
+        return {
+            "active_sessions_count": len(session_tracker),
+            "expired_sessions_count": expired_session_count,
+            "longest_session": longest_session,
+            "largest_session": largest_session,
+            "most_active_session": most_active_session
+        }
+
+def generate_report_now():
+    """Generates the Phase 11 ultimate report using live Scapy telemetry under safe millisecond locking."""
+    with lock:
+        total = counters["total"]
+        tcp = counters["tcp"]
+        udp = counters["udp"]
+        icmp = counters["icmp"]
+        other = counters["other"]
+        
+        top_ips = ip_tracker.most_common(10)
+        top_ports = port_tracker.most_common(10)
+        top_apps = app_tracker.most_common(10)
+        app_counts = dict(app_tracker)
+        suspicious_hits = dict(suspicious_port_hits)
+        scan_data = {ip: set(ports) for ip, ports in port_scan_tracker.items()}
+        host_data = {ip: set(hosts) for ip, hosts in dst_host_tracker.items()}
+        recent_alerts = list(alerts)
+        geo_data = dict(geo_counters)
+        inventory_snapshot = {ip: dict(data) for ip, data in network_inventory.items()}
+        
+        # Calculate threat posture live
+        threat_score = calculate_threat_score(
+            total, udp, icmp, 0, top_ips, app_counts, suspicious_hits, scan_data, host_data
+        )
+        risk_level = get_risk_level(threat_score)
+        security_health = 100 - threat_score
+        
+        active_alerts = detect_anomalies(
+            total, udp, icmp, 0, top_ips, app_counts, suspicious_hits, scan_data, host_data
+        )
+        
+        top_sessions = sorted(
+            session_tracker.items(),
+            key=lambda item: item[1]["packets"],
+            reverse=True
+        )[:5]
+
+        # Call original report generator from the Phase 11 Ultimate sniffer
+        report_path = generate_report(
+            total, tcp, udp, icmp, other,
+            top_ips, top_ports, top_apps,
+            app_counts, threat_score, risk_level,
+            security_health, active_alerts,
+            top_sessions, geo_data, inventory_snapshot
+        )
+        
+        # Read the file and its modified timestamp
+        mtime = os.path.getmtime(report_path)
+        timestamp_str = datetime.fromtimestamp(mtime).strftime("%Y-%m-%d %H:%M:%S")
+        
+        with open(report_path, "r") as f:
+            content = f.read()
+            
+        return {
+            "timestamp": timestamp_str,
+            "content": content
         }

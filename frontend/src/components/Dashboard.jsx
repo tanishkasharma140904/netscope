@@ -11,13 +11,12 @@ import {
 import StatCard from './StatCard';
 import LiveCounter from './LiveCounter';
 import { LiveTimelineChart, ProtocolDonutChart } from './LiveCharts';
-import AttackMap from './AttackMap';
 import TopologyGraph from './TopologyGraph';
 import HealthPanel from './HealthPanel';
 import ErrorBoundary from './ErrorBoundary';
 import SkeletonLoader from './SkeletonLoader';
 
-export default function Dashboard({ onThreatClick, onHostClick, onSessionClick }) {
+export default function Dashboard({ onHostClick }) {
   const { 
     stats, 
     summaryData, 
@@ -79,7 +78,7 @@ export default function Dashboard({ onThreatClick, onHostClick, onSessionClick }
             Platform Dashboard
           </h2>
           <p className="text-slate-500 text-xs mt-1">
-            Real-time ingestion telemetry and passive traffic heuristics.
+            Real-time Ingesting Telemetry & Passive Wire Heuristics.
           </p>
         </div>
         {apiStatus === 'OFFLINE' && (
@@ -198,12 +197,9 @@ export default function Dashboard({ onThreatClick, onHostClick, onSessionClick }
         </div>
       </div>
 
-      {/* Attack Map, Network Topology circular node graph, and Health Diagnostics panel */}
+      {/* Network Topology circular node graph, and Health Diagnostics panel */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-          <ErrorBoundary>
-            <AttackMap />
-          </ErrorBoundary>
+        <div className="lg:col-span-2">
           <ErrorBoundary>
             <TopologyGraph onHostClick={onHostClick} />
           </ErrorBoundary>

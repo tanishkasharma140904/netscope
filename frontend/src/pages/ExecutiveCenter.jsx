@@ -1,13 +1,19 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { useConnection } from '../context/ConnectionContext';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ShieldCheck, 
   TrendingDown, 
   FileLock2, 
   CheckCircle2,
   AlertOctagon,
-  AlertTriangle
+  AlertTriangle,
+  Download,
+  Eye,
+  RefreshCw,
+  FileText,
+  X
 } from 'lucide-react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts';
 import SkeletonLoader from '../components/SkeletonLoader';
@@ -20,6 +26,45 @@ export default function ExecutiveCenter() {
     apiStatus, 
     lastUpdated 
   } = useConnection();
+
+  const [report, setReport] = useState({ timestamp: 'N/A', content: '' });
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [reportLoading, setReportLoading] = useState(false);
+
+  const fetchReport = async () => {
+    try {
+      const response = await axios.get('/api/report');
+      setReport(response.data);
+    } catch (e) {
+      console.error("[REPORT API ERROR] Failed to fetch report:", e);
+    }
+  };
+
+  const handleGenerateReport = async () => {
+    setReportLoading(true);
+    try {
+      const response = await axios.post('/api/report/generate');
+      setReport(response.data);
+    } catch (e) {
+      console.error("[REPORT API ERROR] Failed to generate report:", e);
+    } finally {
+      setReportLoading(false);
+    }
+  };
+
+  const handleDownload = () => {
+    const element = document.createElement("a");
+    const file = new Blob([report.content], { type: 'text/plain' });
+    element.href = URL.createObjectURL(file);
+    element.download = `netscope_final_report_${report.timestamp.replace(/[: ]/g, "_")}.txt`;
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  };
+
+  useEffect(() => {
+    fetchReport();
+  }, []);
 
   const getSeverityColor = (level) => {
     if (level === 'CRITICAL') return 'text-rose-500 bg-rose-500/10 border-rose-500/20';
@@ -255,6 +300,39 @@ export default function ExecutiveCenter() {
                   </span>
                 </div>
               </div>
+
+              {/* Feature 8: Export Report Action Panel */}
+              <div className="border-t border-slate-800/60 pt-4 space-y-3">
+                <div className="flex justify-between items-center text-[9px] text-slate-500">
+                  <span>LAST REPORT LOGGED</span>
+                  <span className="font-bold text-slate-450">{report.timestamp}</span>
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  <button
+                    onClick={handleGenerateReport}
+                    disabled={reportLoading}
+                    className="flex flex-col items-center justify-center p-2 bg-slate-950 border border-slate-850 hover:bg-slate-800 rounded text-slate-400 hover:text-slate-200 disabled:opacity-40 cursor-pointer"
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 mb-1 ${reportLoading ? 'animate-spin' : ''}`} />
+                    <span className="text-[8px] uppercase tracking-wider font-bold">Refresh</span>
+                  </button>
+                  <button
+                    onClick={() => setShowReportModal(true)}
+                    className="flex flex-col items-center justify-center p-2 bg-slate-950 border border-slate-850 hover:bg-slate-800 rounded text-slate-400 hover:text-slate-200 cursor-pointer"
+                  >
+                    <Eye className="w-3.5 h-3.5 mb-1" />
+                    <span className="text-[8px] uppercase tracking-wider font-bold">View</span>
+                  </button>
+                  <button
+                    onClick={handleDownload}
+                    className="flex flex-col items-center justify-center p-2 bg-slate-950 border border-slate-850 hover:bg-slate-800 rounded text-slate-400 hover:text-slate-200 cursor-pointer"
+                  >
+                    <Download className="w-3.5 h-3.5 mb-1" />
+                    <span className="text-[8px] uppercase tracking-wider font-bold">Download</span>
+                  </button>
+                </div>
+              </div>
+
               <div className="border-t border-slate-800/60 pt-4 flex justify-between text-[9px] text-slate-500 uppercase">
                 <span>sensor: online</span>
                 <span>node: active</span>
@@ -263,6 +341,71 @@ export default function ExecutiveCenter() {
           </div>
         </>
       )}
+
+      {/* Report Viewer Overlay Modal */}
+      <AnimatePresence>
+        {showReportModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowReportModal(false)}
+              className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"
+            />
+            {/* Modal Box */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="relative w-full max-w-2xl bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden flex flex-col h-[75vh] shadow-2xl z-10 font-mono"
+            >
+              {/* Header */}
+              <div className="flex justify-between items-center px-6 py-4 border-b border-slate-800/60 bg-slate-950/40">
+                <div className="flex items-center gap-2 text-cyan-400">
+                  <FileText className="w-4 h-4" />
+                  <span className="text-xs font-bold uppercase tracking-wider">Executive Command Security Report</span>
+                </div>
+                <button
+                  onClick={() => setShowReportModal(false)}
+                  className="text-slate-500 hover:text-slate-300 transition-colors cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Timestamp info bar */}
+              <div className="px-6 py-2 bg-slate-950/20 border-b border-slate-800/40 flex justify-between text-[9px] text-slate-500">
+                <span>AUDIT SPEC: Phase 11 Ultimate</span>
+                <span>GENERATED: {report.timestamp}</span>
+              </div>
+
+              {/* Report content */}
+              <div className="flex-1 p-6 overflow-y-auto bg-slate-950/50 text-[10px] text-slate-300 whitespace-pre scrollbar-thin select-text selection:bg-cyan-500/20 leading-relaxed font-mono">
+                {report.content || "Retrieving report telemetry..."}
+              </div>
+
+              {/* Action Footer */}
+              <div className="px-6 py-4 border-t border-slate-800/60 bg-slate-950/40 flex justify-end gap-2">
+                <button
+                  onClick={handleDownload}
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-cyan-500/10 border border-cyan-500/35 hover:bg-cyan-500/20 rounded text-xs font-mono font-bold text-cyan-400 transition-colors cursor-pointer"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Download Report</span>
+                </button>
+                <button
+                  onClick={() => setShowReportModal(false)}
+                  className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded text-xs font-mono font-bold text-slate-300 transition-colors cursor-pointer"
+                >
+                  Close
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

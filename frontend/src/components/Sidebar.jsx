@@ -1,13 +1,17 @@
-import React from 'react';
 import { 
   Shield, 
   LayoutDashboard, 
   AlertTriangle, 
   Network, 
   History, 
-  BarChart3, 
   FileSpreadsheet,
-  FolderClosed
+  Activity,
+  Cpu,
+  Globe,
+  TrendingUp,
+  AlertCircle,
+  Terminal,
+  ShieldAlert
 } from 'lucide-react';
 
 export default function Sidebar({ currentPage, setCurrentPage }) {
@@ -16,9 +20,14 @@ export default function Sidebar({ currentPage, setCurrentPage }) {
     { id: 'threats', label: 'Threat Center', icon: AlertTriangle, badge: 'LIVE' },
     { id: 'sessions', label: 'Sessions', icon: Network },
     { id: 'inventory', label: 'Inventory', icon: History },
-    { id: 'forensics', label: 'Forensics Center', icon: FolderClosed },
-    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
     { id: 'executive', label: 'Executive Summary', icon: FileSpreadsheet },
+    { id: 'ports', label: 'Port Analysis', icon: Activity },
+    { id: 'apps', label: 'App Intelligence', icon: Cpu },
+    { id: 'geo', label: 'Geo Intelligence', icon: Globe },
+    { id: 'session_analytics', label: 'Session Analytics', icon: TrendingUp },
+    { id: 'alerts_history', label: 'Alert History', icon: AlertCircle },
+    { id: 'traffic_logs', label: 'Traffic Logs', icon: Terminal },
+    { id: 'security_events', label: 'Security Events', icon: ShieldAlert },
   ];
 
   return (

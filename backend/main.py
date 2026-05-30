@@ -30,6 +30,11 @@ from backend.api.routes import (
     executive_summary,
     history,
     forensics,
+    geo,
+    alert_history,
+    traffic_logs,
+    security_events,
+    report,
 )
 
 # Import database persistence service
@@ -68,6 +73,11 @@ app.include_router(applications.router, prefix="/api", tags=["Application Intell
 app.include_router(executive_summary.router, prefix="/api", tags=["Executive Summary"])
 app.include_router(history.router, prefix="/api")
 app.include_router(forensics.router, prefix="/api", tags=["Forensics"])
+app.include_router(geo.router, prefix="/api", tags=["Geo Intelligence"])
+app.include_router(alert_history.router, prefix="/api", tags=["Alert History"])
+app.include_router(traffic_logs.router, prefix="/api", tags=["Traffic Log Viewer"])
+app.include_router(security_events.router, prefix="/api", tags=["Security Event Log Viewer"])
+app.include_router(report.router, prefix="/api", tags=["Executive Security Report"])
 app.include_router(ws_routes.router)
 
 # Mount Static Files (Stage 3)

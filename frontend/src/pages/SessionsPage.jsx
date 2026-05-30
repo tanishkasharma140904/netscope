@@ -14,7 +14,7 @@ import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Toolti
 import SkeletonLoader from '../components/SkeletonLoader';
 import EmptyState from '../components/EmptyState';
 
-export default function SessionsPage({ onSessionClick, onHostClick }) {
+export default function SessionsPage({ onHostClick }) {
   const { apiStatus, lastUpdated } = useConnection();
   const [sessions, setSessions] = useState([]);
   const [sessionCount, setSessionCount] = useState(0);
@@ -214,8 +214,7 @@ export default function SessionsPage({ onSessionClick, onHostClick }) {
                   sortedSessions.map((session, index) => (
                     <tr 
                       key={index}
-                      onClick={() => onSessionClick && onSessionClick(session)}
-                      className="border-b border-slate-800/50 bg-slate-950/20 hover:bg-slate-950/60 transition-colors cursor-pointer"
+                      className="border-b border-slate-800/50 bg-slate-950/20 hover:bg-slate-950/60 transition-colors"
                     >
                       <td className="py-2.5 px-3">
                         <span className={`px-1.5 py-0.5 rounded font-extrabold text-[9px] ${

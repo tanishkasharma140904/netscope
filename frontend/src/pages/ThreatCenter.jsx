@@ -13,7 +13,7 @@ import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Toolti
 import SkeletonLoader from '../components/SkeletonLoader';
 import EmptyState from '../components/EmptyState';
 
-export default function ThreatCenter({ onThreatClick, onHostClick }) {
+export default function ThreatCenter({ onHostClick }) {
   const { apiStatus, lastUpdated } = useConnection();
   const [threatData, setThreatData] = useState({
     threat_score: 0,
@@ -212,8 +212,7 @@ export default function ThreatCenter({ onThreatClick, onHostClick }) {
                   return (
                     <div 
                       key={index}
-                      onClick={() => onThreatClick && onThreatClick(alert)}
-                      className="p-3 bg-slate-950/60 border border-slate-900 hover:border-cyan-500/30 hover:bg-slate-900/30 rounded-lg flex items-center justify-between gap-4 font-mono text-[10px] text-slate-300 cursor-pointer transition-all"
+                      className="p-3 bg-slate-950/60 border border-slate-900 rounded-lg flex items-center justify-between gap-4 font-mono text-[10px] text-slate-300"
                     >
                       <div className="flex items-center gap-3">
                         <span className={`px-2 py-0.5 border rounded uppercase font-bold text-[9px] ${
@@ -223,7 +222,7 @@ export default function ThreatCenter({ onThreatClick, onHostClick }) {
                         </span>
                         <span className="font-semibold text-slate-200">{alert}</span>
                       </div>
-                      <span className="text-cyan-500/60 font-bold shrink-0 hover:text-cyan-400">INVESTIGATE</span>
+                      <span className="text-slate-600 font-bold shrink-0">LOGGED</span>
                     </div>
                   );
                 })

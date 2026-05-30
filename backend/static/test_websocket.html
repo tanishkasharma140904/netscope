@@ -113,19 +113,24 @@
                 outputEl.innerHTML += `[SYSTEM] Disconnected.\n`;
                 outputEl.scrollTop = outputEl.scrollHeight;
             } else {
-                // Connect
-                outputEl.innerHTML = `[SYSTEM] Connecting to ws://${window.location.host}/ws/live/${type} ...\n`;
-                
                 // Determine websocket protocol based on http/https
                 const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-                const wsUrl = `${protocol}//${window.location.host}/ws/live/${type}`;
+                
+                let host = window.location.host;
+                // Fallback to backend port 8000 when opened via local file or Vite dev server
+                if (!host || host.includes(':3000') || window.location.protocol === 'file:') {
+                    host = '127.0.0.1:8000';
+                }
+
+                outputEl.innerHTML = `[SYSTEM] Connecting to ws://${host}/ws/live/${type} ...\n`;
+                const wsUrl = `${protocol}//${host}/ws/live/${type}`;
                 const ws = new WebSocket(wsUrl);
 
                 ws.onopen = () => {
                     statusEl.innerText = "CONNECTED";
                     statusEl.style.color = "#00ff00";
                     btn.innerText = "Disconnect";
-                    outputEl.innerHTML += `[SYSTEM] Connected successfully.\n`;
+                    outputEl.innerHTML += `[SYSTEM] Connected successfully to ws://${host}/ws/live/${type}.\n`;
                     outputEl.scrollTop = outputEl.scrollHeight;
                 };
 

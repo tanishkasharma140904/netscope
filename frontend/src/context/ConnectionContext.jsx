@@ -113,7 +113,14 @@ export const ConnectionProvider = ({ children }) => {
   // Unified WebSocket connection engine
   const connectWebSocket = useCallback((urlPath, setPayload, setWsStatus, retryDelayRef, wsRef, timerIdRef) => {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}${urlPath}`;
+    
+    let host = window.location.host;
+    // Fallback to backend port 8000 when opened via local file or Vite dev server
+    if (!host || host.includes(':3000') || host.includes(':3001') || host.includes(':5173') || window.location.protocol === 'file:') {
+      host = '127.0.0.1:8000';
+    }
+
+    const wsUrl = `${protocol}//${host}${urlPath}`;
 
     if (timerIdRef.current) {
       clearTimeout(timerIdRef.current);

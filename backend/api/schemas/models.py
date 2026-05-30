@@ -208,3 +208,67 @@ class StatsHistoryEntry(BaseModel):
     class Config:
         from_attributes = True
 
+
+class GeoHostEntry(BaseModel):
+    ip: str
+    packet_count: int
+
+class GeoResponse(BaseModel):
+    internal_connections: int
+    external_connections: int
+    internal_ratio: float
+    external_ratio: float
+    top_external_hosts: List[GeoHostEntry]
+
+class SessionAnalyticsEntry(BaseModel):
+    source_ip: str
+    destination_ip: str
+    protocol: str
+    source_port: int
+    destination_port: int
+    packets: int
+    bytes: int
+    duration: float
+
+class SessionAnalyticsResponse(BaseModel):
+    active_sessions_count: int
+    expired_sessions_count: int
+    longest_session: Optional[SessionAnalyticsEntry]
+    largest_session: Optional[SessionAnalyticsEntry]
+    most_active_session: Optional[SessionAnalyticsEntry]
+
+class AlertHistoryResponseEntry(BaseModel):
+    id: int
+    alert_type: str
+    severity: str
+    message: str
+    timestamp: str
+
+class TrafficLogEntry(BaseModel):
+    id: int
+    timestamp: str
+    source_ip: str
+    destination_ip: str
+    protocol: str
+    source_port: int
+    destination_port: int
+    packet_size: int
+
+class TrafficLogsResponse(BaseModel):
+    total: int
+    logs: List[TrafficLogEntry]
+
+class SecurityEventEntry(BaseModel):
+    id: int
+    timestamp: str
+    classification: str
+    message: str
+
+class SecurityEventsResponse(BaseModel):
+    total: int
+    events: List[SecurityEventEntry]
+
+class ReportResponse(BaseModel):
+    timestamp: str
+    content: str
+
