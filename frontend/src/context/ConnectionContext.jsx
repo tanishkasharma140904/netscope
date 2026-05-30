@@ -75,7 +75,14 @@ export const ConnectionProvider = ({ children }) => {
       if (apiStatus === 'OFFLINE') {
         setApiStatus('RECONNECTING');
       }
-      const response = await axios.get('/api/executive-summary');
+      const API_BASE =
+      window.location.hostname.includes('netlify.app')
+        ? 'https://netscope-backend-6fbb.onrender.com'
+        : '';
+    
+    const response = await axios.get(
+      `${API_BASE}/api/executive-summary`
+    );
       const latency = Math.round(performance.now() - startTime);
 
       const s = response.data;
