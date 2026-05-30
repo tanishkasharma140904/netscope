@@ -174,16 +174,17 @@ export default function TopologyGraph({ onHostClick }) {
         >
           <Background color="#1e293b" gap={16} size={1} />
           <Controls 
+            className="netscope-react-flow-controls"
             style={{ 
               display: 'flex', 
               flexDirection: 'row', 
               bottom: 10, 
               left: 10,
-              background: '#0f172a',
-              border: '1px solid #334155',
-              borderRadius: '6px',
-              padding: '2px',
-              boxShadow: 'none'
+              background: '#020617',
+              border: '1px solid rgba(6, 182, 212, 0.4)',
+              borderRadius: '8px',
+              padding: '4px',
+              boxShadow: '0 0 12px rgba(6, 182, 212, 0.15)'
             }} 
             showInteractive={false}
           />

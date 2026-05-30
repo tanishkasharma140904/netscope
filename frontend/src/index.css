@@ -35,3 +35,57 @@ body {
   animation: marquee 30s linear infinite;
 }
 
+/* Custom React Flow Controls styled for NetScope Theme visibility */
+.react-flow__controls.netscope-react-flow-controls {
+  display: flex !important;
+  flex-direction: row !important;
+  bottom: 10px !important;
+  left: 10px !important;
+  background: #020617 !important;
+  border: 1px solid rgba(6, 182, 212, 0.4) !important;
+  border-radius: 8px !important;
+  padding: 4px !important;
+  box-shadow: 0 0 12px rgba(6, 182, 212, 0.15) !important;
+  transition: box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out !important;
+}
+
+.react-flow__controls.netscope-react-flow-controls:hover {
+  border-color: rgba(6, 182, 212, 0.7) !important;
+  box-shadow: 0 0 16px rgba(6, 182, 212, 0.3) !important; /* Slight glow increase */
+}
+
+.react-flow__controls.netscope-react-flow-controls .react-flow__controls-button {
+  background: transparent !important;
+  border: none !important;
+  border-right: 1px solid rgba(51, 65, 85, 0.5) !important;
+  width: 28px !important;
+  height: 28px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.react-flow__controls.netscope-react-flow-controls .react-flow__controls-button:last-child {
+  border-right: none !important;
+}
+
+.react-flow__controls.netscope-react-flow-controls .react-flow__controls-button svg {
+  width: 14px !important;
+  height: 14px !important;
+  fill: #00d4ff !important; /* Bright cyan */
+  color: #00d4ff !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.react-flow__controls.netscope-react-flow-controls .react-flow__controls-button:hover {
+  background: rgba(6, 182, 212, 0.15) !important; /* Slight background brighten */
+}
+
+.react-flow__controls.netscope-react-flow-controls .react-flow__controls-button:hover svg {
+  fill: #00f0ff !important; /* Slightly brighter cyan on hover */
+  color: #00f0ff !important;
+  transform: scale(1.1) !important;
+}
+
