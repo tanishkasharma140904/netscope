@@ -16,4 +16,4 @@ venv/
 # Build files
 dist/
 node_modules/
-*.db-journal
+*.db-journal.DS_Store
