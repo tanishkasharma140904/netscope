@@ -1,0 +1,34 @@
+services:
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+
+    container_name: netscope-backend
+
+    ports:
+      - "8000:8000"
+
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+
+    volumes:
+      - ./backend/database:/app/backend/database
+      - ./phase1/logs:/app/phase1/logs
+      - ./phase1/reports:/app/phase1/reports
+
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+
+    container_name: netscope-frontend
+
+    ports:
+      - "3001:80"
+
+    depends_on:
+      - backend

@@ -75,14 +75,7 @@ export const ConnectionProvider = ({ children }) => {
       if (apiStatus === 'OFFLINE') {
         setApiStatus('RECONNECTING');
       }
-      const API_BASE =
-      window.location.hostname.includes('netlify.app')
-        ? 'https://netscope-backend-6fbb.onrender.com'
-        : '';
-    
-    const response = await axios.get(
-      `${API_BASE}/api/executive-summary`
-    );
+      const response = await axios.get('/api/executive-summary');
       const latency = Math.round(performance.now() - startTime);
 
       const s = response.data;
@@ -120,25 +113,7 @@ export const ConnectionProvider = ({ children }) => {
   // Unified WebSocket connection engine
   const connectWebSocket = useCallback((urlPath, setPayload, setWsStatus, retryDelayRef, wsRef, timerIdRef) => {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    
-    let host = window.location.host;
-
-    // Local development
-    if (
-      !host ||
-      host.includes(':3000') ||
-      host.includes(':3001') ||
-      host.includes(':5173') ||
-      window.location.protocol === 'file:'
-    ) {
-      host = '127.0.0.1:8000';
-    }
-    
-    // Netlify Production
-    if (window.location.hostname.includes('netlify.app')) {
-      host = 'netscope-backend-6fbb.onrender.com';
-    }
-
+    const host = window.location.host;
     const wsUrl = `${protocol}//${host}${urlPath}`;
 
     if (timerIdRef.current) {
