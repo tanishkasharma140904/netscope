@@ -20,6 +20,17 @@ https://github.com/tanishkasharma140904/netscope
 </div>
 
 ---
+## 🚀 Live Deployment
+
+🌐 **Live:** https://netscope-ai.duckdns.org
+
+### DevOps Deployment
+- AWS EC2 (Ubuntu)
+- Docker & Docker Compose
+- Nginx Reverse Proxy
+- HTTPS with Let's Encrypt
+- GitHub Actions CI/CD
+- AWS CloudWatch Monitoring
 
 # 📖 About The Project
 
