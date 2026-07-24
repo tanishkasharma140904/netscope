@@ -1,0 +1,27 @@
+name: Deploy NetScope to AWS EC2
+
+on:
+  push:
+    branches:
+      - devops
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd ~/netscope
+            git checkout devops
+            git pull origin devops
+            docker compose build
+            docker compose up -d
+            docker compose ps
+
+
